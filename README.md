@@ -14,3 +14,5 @@ docker-compose pull
 ```
 docker-compose up
 ```
+
+После этого интерфейс будет на порте 8080
