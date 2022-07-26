@@ -1,0 +1,52 @@
+version: '3.6'
+services:
+  db:
+    image: postgres
+    container_name: workplace-db
+    environment:
+      POSTGRES_USER: testuser
+      POSTGRES_PASSWORD: 1232
+      POSTGRES_DB: workplace
+    ports:
+      - target: 5432
+        published: 5432
+        protocol: tcp
+        mode: host
+    networks:
+      - backdb
+    expose: 
+      - 5432
+  
+  back:
+    build: ./WorkplaceAutomation
+    image: jug2505/workplace-back #
+    container_name: workplace-back
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/workplace
+      SPRING_DATASOURCE_USERNAME: testuser
+      SPRING_DATASOURCE_PASSWORD: 1232
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    ports:
+      - 8081:8081
+    depends_on:
+      - db
+    networks:
+      - frontback 
+      - backdb
+
+  front:
+    build: ./managerfront
+    image: jug2505/workplace-front #
+    container_name: workplace-front
+    ports:
+      - 8080:8080
+    depends_on:
+      - back
+    networks: 
+      - frontback     
+  
+networks: 
+  backdb:
+    driver: bridge
+  frontback:
+    driver: bridge
